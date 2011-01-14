@@ -2,10 +2,9 @@
 require 'devise'
 require 'facebooker'
 
-require 'devise_facebook_connectable/model' # QUESTION: should this really be here? Autoloaded below...
+require 'devise_facebook_connectable/model'
 require 'devise_facebook_connectable/strategy'
 require 'devise_facebook_connectable/schema'
-require 'devise_facebook_connectable/routes'
 require 'devise_facebook_connectable/controller_filters'
 require 'devise_facebook_connectable/view_helpers'
 
