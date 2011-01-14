@@ -54,10 +54,8 @@ module Devise #:nodoc:
               set_now_flash_message :failure, :facebook_authenticity_token
               render_with_scope :new, :controller => :sessions
             end
-
           end
         end
-
       end
     end
   end

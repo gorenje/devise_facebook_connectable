@@ -55,22 +55,22 @@ module Devise #:nodoc:
         options = args.extract_options!
         options.except!(:scope, :for)
         options.reverse_merge!(
-            :label => ::I18n.t(:sign_in, :scope => [:devise, :sessions, :facebook_actions]),
-            :size => :large,
-            :length => :long,
-            :background => :white,
-            :button => true,
-            :autologoutlink => false
-          )
+                               :label => ::I18n.t(:sign_in, :scope => [:devise, :sessions, :facebook_actions]),
+                               :size => :large,
+                               :length => :long,
+                               :background => :white,
+                               :button => true,
+                               :autologoutlink => false
+                               )
         options.merge!(:sign_out => true) if options[:autologoutlink] && signed_in?(scope)
 
         content_tag(:div, :class => 'facebook_connect_link sign_in') do
           with_output_buffer { facebook_connect_form(scope, options.slice(:method)) } +
-          if options[:button]
-            fb_login_button('devise.facebook_connectable.sign_in();', options)
-          else
-            fb_logout_link(options[:label], 'devise.facebook_connectable.sign_in_with_callback();')
-          end
+            if options[:button]
+              fb_login_button('devise.facebook_connectable.sign_in();', options)
+            else
+              fb_logout_link(options[:label], 'devise.facebook_connectable.sign_in_with_callback();')
+            end
         end
       end
       alias :facebook_connect_link :facebook_sign_in_link
@@ -83,20 +83,20 @@ module Devise #:nodoc:
         options = args.extract_options!
         options.except!(:scope, :for)
         options.reverse_merge!(
-            :label => ::I18n.t(:sign_out, :scope => [:devise, :sessions, :facebook_actions]),
-            :size => :large,
-            :length => :long,
-            :background => :white,
-            :button => false
-          )
+                               :label => ::I18n.t(:sign_out, :scope => [:devise, :sessions, :facebook_actions]),
+                               :size => :large,
+                               :length => :long,
+                               :background => :white,
+                               :button => false
+                               )
 
         content_tag(:div, :class => 'facebook_connect_link sign_out') do
           with_output_buffer { facebook_connect_form(scope, :sign_out => true, :method => :get) } +
-          if options[:button]
-            fb_login_button('devise.facebook_connectable.sign_out();', options.merge(:autologoutlink => true))
-          else
-            fb_logout_link(options[:label], destroy_session_path(:user))
-          end
+            if options[:button]
+              fb_login_button('devise.facebook_connectable.sign_out();', options.merge(:autologoutlink => true))
+            else
+              fb_logout_link(options[:label], destroy_session_path(:user))
+            end
         end
       end
 
@@ -121,55 +121,54 @@ module Devise #:nodoc:
 
       protected
 
-        # Auto-detect Devise scope using +Devise.default_scope+.
-        # Used to make the link-helpers smart if - like in most cases -
-        # only one devise scope will be used, e.g. "user" or "account".
-        #
-        def auto_detect_scope(*args)
-          options = args.extract_options!
+      # Auto-detect Devise scope using +Devise.default_scope+.
+      # Used to make the link-helpers smart if - like in most cases -
+      # only one devise scope will be used, e.g. "user" or "account".
+      #
+      def auto_detect_scope(*args)
+        options = args.extract_options!
 
-          if options.key?(:for)
-            options[:scope] = options[:for]
-            ::ActiveSupport::Deprecation.warn("DEPRECATION: " <<
-              "Devise scope :for option is deprecated. " <<
-              "Use: facebook_*_link(:some_scope), or facebook_*_link(:scope => :some_scope)")
-          end
+        if options.key?(:for)
+          options[:scope] = options[:for]
+          ::ActiveSupport::Deprecation.warn("DEPRECATION: " <<
+                                            "Devise scope :for option is deprecated. " <<
+                                            "Use: facebook_*_link(:some_scope), or facebook_*_link(:scope => :some_scope)")
+        end
 
-          scope = args.detect { |arg| arg.is_a?(Symbol) } || options[:scope] || ::Devise.default_scope
-          mapping = ::Devise.mappings[scope]
+        scope = args.detect { |arg| arg.is_a?(Symbol) } || options[:scope] || ::Devise.default_scope
+        mapping = ::Devise.mappings[scope]
 
-          if mapping.for.include?(:facebook_connectable)
-            scope
-          else
-            error_message =
-              "%s" <<
-              " Did you forget to devise facebook_connect in your model? Like this: devise :facebook_connectable." <<
-              " You can also specify scope explicitly, e.g.: facebook_*link :for => :customer."
-            error_message %=
-              if scope.present?
-                "#{scope.inspect} is not a valid facebook_connectable devise scope. " <<
+        if mapping.for.include?(:facebook_connectable)
+          scope
+        else
+          error_message =
+            "%s" <<
+            " Did you forget to devise facebook_connect in your model? Like this: devise :facebook_connectable." <<
+            " You can also specify scope explicitly, e.g.: facebook_*link :for => :customer."
+          error_message %=
+            if scope.present?
+              "#{scope.inspect} is not a valid facebook_connectable devise scope. " <<
                 "Loaded modules for this scope: #{mapping.for.inspect}."
-              else
-                "Could not auto-detect any facebook_connectable devise scope."
-              end
-            raise error_message
-          end
+            else
+              "Could not auto-detect any facebook_connectable devise scope."
+            end
+          raise error_message
         end
+      end
 
-        # Generate agnostic hidden sign in/out (connect) form for Facebook Connect.
-        #
-        def facebook_connect_form(scope, options = {})
-          sign_out_form = options.delete(:sign_out)
-          options.reverse_merge!(
-              :id => (sign_out_form ? 'fb_connect_sign_out_form' : 'fb_connect_sign_in_form'),
-              :style => 'display:none;'
-            )
-          scope = ::Devise::Mapping.find_by_path(request.path).name rescue scope
-          url = sign_out_form ? destroy_session_path(scope) : session_path(scope)
+      # Generate agnostic hidden sign in/out (connect) form for Facebook Connect.
+      #
+      def facebook_connect_form(scope, options = {})
+        sign_out_form = options.delete(:sign_out)
+        options.reverse_merge!(
+                               :id => (sign_out_form ? 'fb_connect_sign_out_form' : 'fb_connect_sign_in_form'),
+                               :style => 'display:none;'
+                               )
+        scope = ::Devise::Mapping.find_by_path(request.path).name rescue scope
+        url = sign_out_form ? destroy_session_path(scope) : session_path(scope)
 
-          form_for(scope, :url => url, :html => options) { |f| }
-        end
-
+        form_for(scope, :url => url, :html => options) { |f| }
+      end
     end
   end
 end

@@ -14,7 +14,8 @@ module Devise #:nodoc:
         # Without a Facebook session authentication cannot proceed.
         #
         def valid?
-          mapping.to.respond_to?('authenticate_with_facebook_connect') && ::Facebooker::Session.current.present?
+          mapping.to.respond_to?('authenticate_with_facebook_connect') && 
+            ::Facebooker::Session.current.present?
         end
 
         # Authenticate user with Facebook Connect.
@@ -33,9 +34,9 @@ module Devise #:nodoc:
               if klass.facebook_auto_create_account?
                 user = returning(klass.new) do |u|
                   u.store_facebook_credentials!(
-                      :session_key => facebook_session.session_key,
-                      :uid => facebook_user.uid
-                    )
+                                                :session_key => facebook_session.session_key,
+                                                :uid => facebook_user.uid
+                                                )
                   u.on_before_facebook_connect(facebook_session)
                 end
 
@@ -50,12 +51,11 @@ module Devise #:nodoc:
                 fail!(:facebook_invalid)
               end
             end
-          # NOTE: Facebooker::Session::SessionExpired errors handled in the controller.
+            # NOTE: Facebooker::Session::SessionExpired errors handled in the controller.
           rescue => e
             fail!(e.message)
           end
         end
-
       end
     end
   end
