@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{devise_facebook_connectable}
-  s.version = "0.2.3"
+  s.version = "0.2.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Jonas Grimfelt"]
-  s.date = %q{2011-01-14}
+  s.date = %q{2011-01-16}
   s.description = %q{Devise << Facebook Connect.}
   s.email = %q{grimen@gmail.com}
   s.extra_rdoc_files = [
@@ -19,11 +19,10 @@ Gem::Specification.new do |s|
     "MIT-LICENSE",
      "README.textile",
      "Rakefile",
-     "generators/devise_facebook_connectable/devise_facebook_connectable_generator.rb",
-     "generators/devise_facebook_connectable/templates/devise.facebook_connectable.js",
-     "generators/devise_facebook_connectable/templates/facebooker.yml",
      "lib/devise_facebook_connectable.rb",
-     "lib/devise_facebook_connectable/controller_filters.rb",
+     "lib/devise_facebook_connectable/facebooker/controller.rb",
+     "lib/devise_facebook_connectable/facebooker/session.rb",
+     "lib/devise_facebook_connectable/facebooker/view_helpers.rb",
      "lib/devise_facebook_connectable/locales/en.yml",
      "lib/devise_facebook_connectable/model.rb",
      "lib/devise_facebook_connectable/schema.rb",
@@ -44,16 +43,13 @@ Gem::Specification.new do |s|
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<activesupport>, [">= 2.3.0"])
       s.add_runtime_dependency(%q<devise>, [">= 1.0.0"])
-      s.add_runtime_dependency(%q<facebooker>, [">= 1.0.55"])
     else
       s.add_dependency(%q<activesupport>, [">= 2.3.0"])
       s.add_dependency(%q<devise>, [">= 1.0.0"])
-      s.add_dependency(%q<facebooker>, [">= 1.0.55"])
     end
   else
     s.add_dependency(%q<activesupport>, [">= 2.3.0"])
     s.add_dependency(%q<devise>, [">= 1.0.0"])
-    s.add_dependency(%q<facebooker>, [">= 1.0.55"])
   end
 end
 

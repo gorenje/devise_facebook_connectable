@@ -8,9 +8,21 @@ module Devise #:nodoc:
       #
       def facebook_connectable
         # BIGINT unsigned / 64-bit int
-        apply_schema ::Devise.facebook_uid_field, Integer, :limit => 8  
+        facebook_apply_schema ::Devise::FacebookConnectable.uid_field, Integer, :limit => 8  
         # [128][1][20] chars
-        apply_schema ::Devise.facebook_session_key_field, String, :limit => 149  
+        facebook_apply_schema ::Devise::FacebookConnectable.session_key_field, String, :limit => 149  
+      end
+
+      protected 
+
+      def facebook_apply_schema(*args)
+        # Taken from:
+        #   https://github.com/nbudin/devise_openid_authenticatable/blob/master/lib/devise_openid_authenticatable/schema.rb
+        if respond_to?(:apply_devise_schema)
+          apply_devise_schema *args
+        else
+          apply_schema *args
+        end
       end
     end
   end

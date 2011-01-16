@@ -1,6 +1,5 @@
 # encoding: utf-8
 require 'devise/mapping'
-require 'facebooker/rails/helpers'
 
 module Devise #:nodoc:
   module FacebookConnectable #:nodoc:
@@ -100,25 +99,6 @@ module Devise #:nodoc:
         end
       end
 
-      # TODO: Agnostic Facebook Connect disconnect button/link.
-      # Disconnects, i.e. deletes, user account. Identical as "Delete my account",
-      # but for Facebook Connect (which "un-installs" the app/site for the current user).
-      #
-      # == References:
-      #
-      #   * http://wiki.developers.facebook.com/index.php/Auth.revokeAuthorization
-      #
-      def facebook_disconnect_link(*args)
-        raise "facebook_disconnect_link: Not implemented yet."
-        # TODO:
-        # options.reverse_merge!(
-        #     :label => ::I18n.t(:facebook_disconnect, :scope => [:devise, :sessions, :actions]),
-        #   )
-        # content_tag(:div, :class => 'fb_connect_disconnect_link') do
-        #   link_to_function(options[:label], 'devise.facebook_connectable.disconnect_with_callback();')
-        # end
-      end
-
       protected
 
       # Auto-detect Devise scope using +Devise.default_scope+.
@@ -132,13 +112,15 @@ module Devise #:nodoc:
           options[:scope] = options[:for]
           ::ActiveSupport::Deprecation.warn("DEPRECATION: " <<
                                             "Devise scope :for option is deprecated. " <<
-                                            "Use: facebook_*_link(:some_scope), or facebook_*_link(:scope => :some_scope)")
+                                            "Use: facebook_*_link(:some_scope), " << 
+                                            "or facebook_*_link(:scope => :some_scope)")
         end
 
         scope = args.detect { |arg| arg.is_a?(Symbol) } || options[:scope] || ::Devise.default_scope
         mapping = ::Devise.mappings[scope]
-
-        if mapping.for.include?(:facebook_connectable)
+        # support for older versions of devise
+        all_modules = mapping.respond_to?(:for) ? mapping.for : mapping.modules
+        if all_modules.include?(:facebook_connectable)
           scope
         else
           error_message =
@@ -160,10 +142,9 @@ module Devise #:nodoc:
       #
       def facebook_connect_form(scope, options = {})
         sign_out_form = options.delete(:sign_out)
-        options.reverse_merge!(
-                               :id => (sign_out_form ? 'fb_connect_sign_out_form' : 'fb_connect_sign_in_form'),
-                               :style => 'display:none;'
-                               )
+        options.reverse_merge!(:id => (sign_out_form ? 'fb_connect_sign_out_form' : 
+                                       'fb_connect_sign_in_form'),
+                               :style => 'display:none;')
         scope = ::Devise::Mapping.find_by_path(request.path).name rescue scope
         url = sign_out_form ? destroy_session_path(scope) : session_path(scope)
 

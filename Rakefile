@@ -22,7 +22,6 @@ begin
 
     spec.add_dependency 'activesupport',   '>= 2.3.0'
     spec.add_dependency 'devise',          '>= 1.0.0'
-    spec.add_dependency 'facebooker',      '>= 1.0.55'
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError

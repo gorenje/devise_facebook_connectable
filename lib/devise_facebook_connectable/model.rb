@@ -1,6 +1,5 @@
 # encoding: utf-8
 require 'devise/models'
-require 'facebooker/session'
 
 module Devise #:nodoc:
   # module FacebookConnectable #:nodoc:
@@ -37,8 +36,8 @@ module Devise #:nodoc:
       # Store Facebook Connect account/session credentials.
       #
       def store_facebook_credentials!(attributes = {})
-        self.send("#{self.class.facebook_uid_field}=", attributes[:uid])
-        self.send("#{self.class.facebook_session_key_field}=", attributes[:session_key])
+        self.send("#{Devise::FacebookConnectable.uid_field}=", attributes[:uid])
+        self.send("#{Devise::FacebookConnectable.session_key_field}=", attributes[:session_key])
 
         # Confirm without e-mail - if confirmable module is loaded.
         self.skip_confirmation! if self.respond_to?(:skip_confirmation!)
@@ -56,7 +55,7 @@ module Devise #:nodoc:
       # Checks if Facebook Connect:ed.
       #
       def facebook_connected?
-        self.send(:"#{self.class.facebook_uid_field}").present?
+        self.send("#{Devise::FacebookConnectable.uid_field}").present?
       end
       alias :is_facebook_connected? :facebook_connected?
 
@@ -130,7 +129,7 @@ module Devise #:nodoc:
       #
       def store_session(using_session_key)
         if self.session_key != using_session_key
-          self.update_attribute(self.send("#{self.class.facebook_session_key_field}"), 
+          self.update_attribute(self.send("#{Devise::FacebookConnectable.session_key_field}"),
                                 using_session_key)
         end
       end
@@ -139,11 +138,11 @@ module Devise #:nodoc:
       #
       def new_facebook_session
         timeout_in = ::Devise.respond_to?(:timeout_in) ? ::Devise.timeout_in : 1.hour.from_now
-        returning(::Facebooker::Session.create) do |new_session|
-          new_session.secure_with!(self.send("#{self.class.facebook_session_key_field}"),
-                                   self.send("#{self.class.facebook_uid_field}"), timeout_in
-                                   )
-          ::Facebooker::Session.current = new_session
+        Devise::FacebookConnectable::Session.create.tap do |new_session|
+          new_session.secure_with!(self.send("#{Devise::FacebookConnectable.session_key_field}"),
+                                   self.send("#{Devise::FacebookConnectable.uid_field}"), 
+                                   timeout_in)
+          Devise::FacebookConnectable::Session.current = new_session
         end
       end
 
@@ -155,28 +154,11 @@ module Devise #:nodoc:
       end
 
       module ClassMethods
-
-        # Configuration params accessible within +Devise.setup+ procedure (in initalizer).
-        #
-        # == Example:
-        #
-        #   Devise.setup do |config|
-        #     config.facebook_uid_field = :facebook_uid
-        #     config.facebook_session_key_field = :facebook_session_key
-        #     config.facebook_auto_create_account = true
-        #   end
-        #
-        ::Devise::Models.config(self,
-                                :facebook_uid_field,
-                                :facebook_session_key_field,
-                                :facebook_auto_create_account
-                                )
-
         # Alias don't work for some reason, so...a more Ruby-ish alias
         # for +facebook_auto_create_account+.
         #
         def facebook_auto_create_account?
-          self.facebook_auto_create_account
+          Devise::FacebookConnectable.auto_create_account
         end
 
         # Authenticate a user based on Facebook UID.
@@ -201,7 +183,8 @@ module Devise #:nodoc:
         #   end
         #
         def find_for_facebook_connect(uid, conditions = {})
-          self.find_by_facebook_uid(uid, :conditions => conditions)
+          method_name = "find_by_#{Devise::FacebookConnectable.uid_field}"
+          self.send(method_name, uid, :conditions => conditions)
         end
 
         # Contains the logic used in authentication. Overwritten by other devise modules.

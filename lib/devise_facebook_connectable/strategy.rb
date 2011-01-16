@@ -1,6 +1,5 @@
 # encoding: utf-8
 require 'devise/strategies/base'
-require 'facebooker/session'
 
 module Devise #:nodoc:
   module FacebookConnectable #:nodoc:
@@ -15,28 +14,25 @@ module Devise #:nodoc:
         #
         def valid?
           mapping.to.respond_to?('authenticate_with_facebook_connect') && 
-            ::Facebooker::Session.current.present?
+            Devise::FacebookConnectable::Session.current.present?
         end
 
         # Authenticate user with Facebook Connect.
         #
         def authenticate!
           klass = mapping.to
-          begin
-            facebook_session = ::Facebooker::Session.current # session[:facebook_session]
-            facebook_user = facebook_session.user
 
-            user = klass.authenticate_with_facebook_connect(:uid => facebook_user.uid)
+          begin
+            facebook_session = Devise::FacebookConnectable::Session.current
+            user = klass.authenticate_with_facebook_connect(:uid => facebook_session.uid)
 
             if user.present?
               success!(user)
             else
               if klass.facebook_auto_create_account?
                 user = returning(klass.new) do |u|
-                  u.store_facebook_credentials!(
-                                                :session_key => facebook_session.session_key,
-                                                :uid => facebook_user.uid
-                                                )
+                  u.store_facebook_credentials!(:session_key => facebook_session.session_key,
+                                                :uid => facebook_session.uid)
                   u.on_before_facebook_connect(facebook_session)
                 end
 
@@ -61,4 +57,5 @@ module Devise #:nodoc:
   end
 end
 
-Warden::Strategies.add(:facebook_connectable, Devise::FacebookConnectable::Strategies::FacebookConnectable)
+Warden::Strategies.add(:facebook_connectable, 
+                       Devise::FacebookConnectable::Strategies::FacebookConnectable)
