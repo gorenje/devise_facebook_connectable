@@ -4,14 +4,14 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = %q{devise_facebook_connectable}
+  s.name = %q{devise_facebook_connectable_light}
   s.version = "0.2.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Jonas Grimfelt"]
+  s.authors = ["Jonas Grimfelt", "Gerrit Riessen"]
   s.date = %q{2011-01-16}
-  s.description = %q{Devise << Facebook Connect.}
-  s.email = %q{grimen@gmail.com}
+  s.description = %q{Devise << Facebook Connect (Cookie Based).}
+  s.email = ["grimen@gmail.com", "gerrit.riessen@gmail.com"]
   s.extra_rdoc_files = [
     "README.textile"
   ]
@@ -30,11 +30,11 @@ Gem::Specification.new do |s|
      "lib/devise_facebook_connectable/version.rb",
      "lib/devise_facebook_connectable/view_helpers.rb"
   ]
-  s.homepage = %q{http://github.com/grimen/devise_facebook_connectable}
+  s.homepage = %q{http://github.com/grimen/devise_facebook_connectable_light}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.7}
-  s.summary = %q{Devise << Facebook Connect.}
+  s.summary = %q{Devise << Facebook Connect (Cookie Based).}
 
   if s.respond_to? :specification_version then
     current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION

@@ -1,6 +1,14 @@
 h1. DEVISE / FACEBOOK CONNECTABLE
 
-_Devise << Facebook Connect_
+Simplified Facebook connect for Devise. 
+
+*Warning*
+
+This is a simplified version of the original "Devise Facebook Connectable":https://github.com/grimen/devise_facebook_connectable that only uses the *fbs_<APP_ID>* cookie for authentication. It removes the dependency on "Facebooker":https://github.com/mmangino/facebooker because (at time of writing) there was no working version (in gem form) of Facebooker for Rails3.
+
+Since this is specifically for Rails3, it will only work with Ruby 1.9.x (However the only change that makes this necessary is the use of Object#tap instead of Object#returning.).
+
+There is no longer to generate anything: facebooker.yml is not longer necessary and this version makes no use of Javascript, instead the fb:login-button is utilised, after which a check is done whether the Facebook cookie is set.
 
 h2. What is Devise?
 
@@ -17,39 +25,21 @@ h2. Dependencies
 *You'll need:*
 
 * *"devise 1.0.6":http://github.com/plataformatec/devise* for authentication - based on "warden":http://github.com/hassox/warden/.
-* *"facebooker":http://github.com/mmangino/facebooker* for Facebook API integration.
-
-*For Ruby 1.9 support:*
-
-* *"rails 2.3.5+":http://github.com/rails/rails* which contains a required Ruby 1.9 patch that Facebooker relies on. See _Important_ for more info.
 
 h2. Installation
 
 *Gem*
 
-<pre>
-  $ sudo gem install devise_facebook_connectable
-</pre>
-
-...and in @config/environment.rb@:
+Currenly this is gem is only available directly from github and preferable using a Gemfile:
 
 <pre>
-  config.gem 'devise_facebook_connectable'
+  gem 'devise_facebook_connectable_light', :git => 'git://github.com/gorenje/devise_facebook_connectable.git'
 </pre>
 
 *Dependencies*
 
-Note: Should be installed automatically with the gem.
-
 <pre>
-  $ sudo gem install devise facebooker
-</pre>
-
-...and in @config/environment.rb@:
-
-<pre>
-  config.gem 'devise'
-  config.gem 'facebooker'
+  gem 'devise'
 </pre>
 
 h2. Setup

@@ -4,7 +4,7 @@ require 'rake'
 require 'rake/rdoctask'
 require File.join(File.dirname(__FILE__), 'lib', 'devise_facebook_connectable', 'version')
 
-NAME = "devise_facebook_connectable"
+NAME = "devise_facebook_connectable_light"
 
 begin
   gem 'jeweler'
@@ -12,11 +12,11 @@ begin
   Jeweler::Tasks.new do |spec|
     spec.name         = NAME
     spec.version      = ::Devise::FacebookConnectable::VERSION
-    spec.summary      = %{Devise << Facebook Connect.}
+    spec.summary      = %{Devise << Facebook Connect (Cookie Based).}
     spec.description  = spec.summary
     spec.homepage     = "http://github.com/grimen/#{spec.name}"
-    spec.authors      = ["Jonas Grimfelt"]
-    spec.email        = "grimen@gmail.com"
+    spec.authors      = ["Jonas Grimfelt", "Gerrit Riessen"]
+    spec.email        = ["grimen@gmail.com", "gerrit.riessen@gmail.com"]
 
     spec.files = FileList['[A-Z]*', File.join(*%w[{generators,lib,rails} ** *]).to_s]
 
