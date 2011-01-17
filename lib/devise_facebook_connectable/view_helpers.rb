@@ -78,6 +78,7 @@ module Devise #:nodoc:
         scope = auto_detect_scope(*args)
         options = args.extract_options!
         options.except!(:scope, :for)
+        callback = options.delete(:callback)
         options.reverse_merge!(
                                :label => ::I18n.t(:sign_in, :scope => [:devise, :sessions, :facebook_actions]),
                                :size => :large,
@@ -88,7 +89,7 @@ module Devise #:nodoc:
                                )
         options.merge!(:sign_out => true) if options[:autologoutlink] && signed_in?(scope)
 
-        fb_login_button("window.location.href = '#{session_path(scope)}';", 
+        fb_login_button(callback || "window.location.href = '#{session_path(scope)}';", 
                         options.merge(:autologoutlink => true))
       end
       alias :facebook_connect_link :facebook_sign_in_link
@@ -100,6 +101,7 @@ module Devise #:nodoc:
         scope = auto_detect_scope(*args)
         options = args.extract_options!
         options.except!(:scope, :for)
+        callback = options.delete(:callback)
         options.reverse_merge!(
                                :label => ::I18n.t(:sign_out, :scope => [:devise, :sessions, :facebook_actions]),
                                :size => :large,
@@ -108,7 +110,7 @@ module Devise #:nodoc:
                                :button => false
                                )
 
-        fb_login_button("window.location.href = '#{destroy_session_path(scope)}';", 
+        fb_login_button(callback || "window.location.href = '#{destroy_session_path(scope)}';", 
                         options.merge(:autologoutlink => true))
       end
 

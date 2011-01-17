@@ -8,7 +8,7 @@ This is a simplified version of the original "Devise Facebook Connectable":https
 
 Since this is specifically for Rails3, it will only work with Ruby 1.9.x (However the only change that makes this necessary is the use of Object#tap instead of Object#returning.).
 
-There is no longer to generate anything: facebooker.yml is not longer necessary and this version makes no use of Javascript, instead the fb:login-button is utilised, after which a check is done whether the Facebook cookie is set.
+There is also no longer any need to generate anything: facebooker.yml is not longer necessary and this version makes limited use of Javascript. 
 
 h2. What is Devise?
 
@@ -194,6 +194,16 @@ Notice that both tags have to appear in the body of the document, not in the hea
 </pre>
 
 etc.
+
+*Callbacks*
+
+Both the sign in/out buttons can be given a Javascript snippet that acts as callback. The defaults are:
+<pre>
+  <%= facebook_sign_out_link :callback => "window.location.href = '#{destroy_session_path(scope)}';" %>
+  <%= facebook_sign_in_link :callback => "window.location.href = '#{session_path(scope)}';" %>
+</pre>
+
+I.e. when the user is logged in, they are redirected to the sessions page that Devise provides. On logout, the user is redirect to the session destroy of Devise. These are important to info Devise that the user either logged in or logged out.
 
 *DONE!*
 
