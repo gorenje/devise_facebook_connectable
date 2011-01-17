@@ -12,6 +12,31 @@ module Devise #:nodoc:
     #
     module Helpers
 
+      # Generate Javascript tag that loads facebook connect. For more details:
+      #   http://developers.facebook.com/docs/authentication/#single-sign-on-with-the-javascript-sdk
+      def facebook_javascript_include_tag(opts = {:lang => "en_US"})
+        javascript_tag(<<-EOF)
+           window.fbAsyncInit = function() {
+             FB.init({appId: '#{Devise::FacebookConnectable.api_id}', status: true, 
+                       cookie: true, xfbml: true});
+           };
+           (function() {
+              var e = document.createElement('script');
+              e.type = 'text/javascript';
+              e.src = document.location.protocol +
+                '//connect.facebook.net/#{opts[:lang]}/all.js';
+              e.async = true;
+              document.getElementById('fb-root').appendChild(e);
+            }());
+        EOF
+      end
+      
+      # Generate Facebook root div tag. For more details:
+      #   http://developers.facebook.com/docs/authentication/#single-sign-on-with-the-javascript-sdk
+      def facebook_root_tag
+        tag(:div, :id => 'fb-root')
+      end
+      
       # == References:
       #
       #   * http://facebooker.rubyforge.org/
@@ -63,14 +88,8 @@ module Devise #:nodoc:
                                )
         options.merge!(:sign_out => true) if options[:autologoutlink] && signed_in?(scope)
 
-        content_tag(:div, :class => 'facebook_connect_link sign_in') do
-          with_output_buffer { facebook_connect_form(scope, options.slice(:method)) } +
-            if options[:button]
-              fb_login_button('devise.facebook_connectable.sign_in();', options)
-            else
-              fb_logout_link(options[:label], 'devise.facebook_connectable.sign_in_with_callback();')
-            end
-        end
+        fb_login_button("window.location.href = '#{session_path(scope)}';", 
+                        options.merge(:autologoutlink => true))
       end
       alias :facebook_connect_link :facebook_sign_in_link
 
@@ -89,14 +108,8 @@ module Devise #:nodoc:
                                :button => false
                                )
 
-        content_tag(:div, :class => 'facebook_connect_link sign_out') do
-          with_output_buffer { facebook_connect_form(scope, :sign_out => true, :method => :get) } +
-            if options[:button]
-              fb_login_button('devise.facebook_connectable.sign_out();', options.merge(:autologoutlink => true))
-            else
-              fb_logout_link(options[:label], destroy_session_path(:user))
-            end
-        end
+        fb_login_button("window.location.href = '#{destroy_session_path(scope)}';", 
+                        options.merge(:autologoutlink => true))
       end
 
       protected
@@ -136,19 +149,6 @@ module Devise #:nodoc:
             end
           raise error_message
         end
-      end
-
-      # Generate agnostic hidden sign in/out (connect) form for Facebook Connect.
-      #
-      def facebook_connect_form(scope, options = {})
-        sign_out_form = options.delete(:sign_out)
-        options.reverse_merge!(:id => (sign_out_form ? 'fb_connect_sign_out_form' : 
-                                       'fb_connect_sign_in_form'),
-                               :style => 'display:none;')
-        scope = ::Devise::Mapping.find_by_path(request.path).name rescue scope
-        url = sign_out_form ? destroy_session_path(scope) : session_path(scope)
-
-        form_for(scope, :url => url, :html => options) { |f| }
       end
     end
   end
