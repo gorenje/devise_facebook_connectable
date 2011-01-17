@@ -34,7 +34,7 @@ module Devise #:nodoc:
       # Generate Facebook root div tag. For more details:
       #   http://developers.facebook.com/docs/authentication/#single-sign-on-with-the-javascript-sdk
       def facebook_root_tag
-        tag(:div, :id => 'fb-root')
+        content_tag(:div, "", :id => 'fb-root')
       end
       
       # == References:
